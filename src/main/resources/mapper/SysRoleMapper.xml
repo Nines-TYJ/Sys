@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nines.starter.mapper.SysRoleMapper">
+<mapper namespace="com.nines.sys.mapper.SysRoleMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.nines.starter.entity.SysRole">
+    <resultMap id="BaseResultMap" type="com.nines.sys.entity.SysRole">
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="remark" property="remark" />
