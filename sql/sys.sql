@@ -1,0 +1,77 @@
+DROP TABLE IF EXISTS sys_user;
+
+CREATE TABLE sys_user
+(
+  id VARCHAR(32) NOT NULL COMMENT '主键ID',
+  nick_name VARCHAR(32) NULL DEFAULT NULL COMMENT '昵称',
+  user_name VARCHAR(32) NOT NULL COMMENT '用户名',
+  pass_word VARCHAR(64) NOT NULL COMMENT '密码',
+  salt VARCHAR(50) NOT NULL COMMENT '加密盐',
+  email VARCHAR(50) DEFAULT NULL COMMENT '邮箱',
+  status TINYINT(1) NOT NULL DEFAULT '0' COMMENT '0是启用,1是禁用',
+  create_time TIMESTAMP COMMENT '创建时间',
+  update_time TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY(id),
+  UNIQUE KEY username(user_name)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT='用户';
+
+
+DROP TABLE IF EXISTS sys_role;
+
+CREATE TABLE sys_role
+(
+  id VARCHAR(32) NOT NULL COMMENT '主键ID',
+  name VARCHAR(50) NULL DEFAULT NULL COMMENT '角色名称',
+  remark VARCHAR(100) DEFAULT NULL COMMENT '备注',
+  status TINYINT(1) NOT NULL DEFAULT '0' COMMENT '0是启用,1是禁用',
+  create_time TIMESTAMP COMMENT '创建时间',
+  update_time TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '角色';
+
+
+DROP TABLE IF EXISTS sys_user_role;
+
+CREATE TABLE sys_user_role
+(
+  id VARCHAR(32) NOT NULL COMMENT '主键ID',
+  user_id VARCHAR(32) NOT NULL COMMENT '用户ID',
+  role_id VARCHAR(32) NOT NULL COMMENT '角色ID',
+  status TINYINT(1) NOT NULL DEFAULT '0' COMMENT '0是启用,1是禁用',
+  create_time TIMESTAMP COMMENT '创建时间',
+  update_time TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '用户与角色关系表';
+
+
+DROP TABLE IF EXISTS sys_permission;
+
+CREATE TABLE sys_permission
+(
+  id VARCHAR(32) NOT NULL COMMENT '主键ID',
+  parent_id VARCHAR(32) NOT NULL DEFAULT 0 COMMENT '父级ID',
+  name VARCHAR(50) NULL DEFAULT NULL COMMENT '权限名称',
+  remark VARCHAR(100) DEFAULT NULL COMMENT '备注',
+  type TINYINT(1) DEFAULT 0 COMMENT '类型 0、菜单 1、功能',
+  sort smallint(5) DEFAULT NULL COMMENT '排序',
+  url VARCHAR(100) DEFAULT NULL COMMENT '链接地址',
+  perm_code varchar(50) DEFAULT NULL COMMENT '权限编码',
+  status TINYINT(1) NOT NULL DEFAULT '0' COMMENT '0是启用,1是禁用',
+  create_time TIMESTAMP COMMENT '创建时间',
+  update_time TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '权限表';
+
+
+DROP TABLE IF EXISTS sys_role_permission;
+
+CREATE TABLE sys_role_permission
+(
+  id VARCHAR(32) NOT NULL COMMENT '主键ID',
+  role_id VARCHAR(32) NOT NULL COMMENT '角色ID',
+  permission_id VARCHAR(32) NOT NULL COMMENT '权限ID',
+  status TINYINT(1) NOT NULL DEFAULT '0' COMMENT '0是启用,1是禁用',
+  create_time TIMESTAMP COMMENT '创建时间',
+  update_time TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '角色与权限关系表';
