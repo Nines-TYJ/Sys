@@ -83,6 +83,16 @@ public class ResponseVo<T> implements Serializable {
     }
 
     /**
+     * 没有登录
+     */
+    public static ResponseVo notLogin(String message) {
+        ResponseVo response = new ResponseVo();
+        response.code = HttpStatus.UNAUTHORIZED.value();
+        response.message = message;
+        return response;
+    }
+
+    /**
      * 没有权限
      */
     public static ResponseVo forbidden() {

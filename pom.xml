@@ -18,6 +18,8 @@
         <fastjson.version>1.2.54</fastjson.version>
         <commons.version>3.9</commons.version>
         <hutool.version>4.5.17</hutool.version>
+        <shiro.version>1.4.0</shiro.version>
+        <jwt.version>3.10.3</jwt.version>
     </properties>
 
     <parent>
@@ -114,18 +116,25 @@
             <version>${fastjson.version}</version>
         </dependency>
 
-        <!-- 工具类 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons.version}</version>
-        </dependency>
-
         <!-- 糊涂工具类 -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+
+        <!-- 权限管理 -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+
+        <!--  JWT 的依赖包 -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${jwt.version}</version>
         </dependency>
 
     </dependencies>

@@ -10,16 +10,16 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 用户
+ * 菜单表
  * </p>
  *
  * @author Nines
- * @since 2020-10-20
+ * @since 2020-10-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysUser implements Serializable {
+public class SysMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,34 +30,34 @@ public class SysUser implements Serializable {
     private String id;
 
     /**
-     * 昵称
+     * 父级ID
      */
-    private String nickName;
+    private String parentId;
 
     /**
-     * 用户名
+     * 菜单名称
      */
-    private String userName;
+    private String name;
 
     /**
-     * 密码
+     * 备注
      */
-    private String passWord;
+    private String remark;
 
     /**
-     * 加密盐
+     * 链接地址
      */
-    private String salt;
+    private String url;
 
     /**
-     * 邮箱
+     * 排序
      */
-    private String email;
+    private Integer sort;
 
     /**
      * 0是启用,1是禁用
      */
-    private Integer status;
+    private Boolean status;
 
     /**
      * 创建时间

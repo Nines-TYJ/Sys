@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Nines
- * @since 2020-10-20
+ * @since 2020-10-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -30,9 +30,9 @@ public class SysPermission implements Serializable {
     private String id;
 
     /**
-     * 父级ID
+     * 所属菜单ID
      */
-    private String parentId;
+    private String menuId;
 
     /**
      * 权限名称
@@ -45,19 +45,9 @@ public class SysPermission implements Serializable {
     private String remark;
 
     /**
-     * 类型 0、菜单 1、功能
-     */
-    private Boolean type;
-
-    /**
      * 排序
      */
     private Integer sort;
-
-    /**
-     * 链接地址
-     */
-    private String url;
 
     /**
      * 权限编码

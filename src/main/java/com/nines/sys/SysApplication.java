@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @date 2020/10/20 17:21
  */
 @SpringBootApplication
-@MapperScan("com.nines.sys.mapper")
 @EnableTransactionManagement
 public class SysApplication {
 

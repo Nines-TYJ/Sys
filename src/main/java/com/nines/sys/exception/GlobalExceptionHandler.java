@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -33,6 +34,14 @@ public class GlobalExceptionHandler {
         return ResponseVo.badRequest(e.getMessage());
     }
 
+    /**
+     * 处理未登录的异常
+     */
+    @ExceptionHandler(value =AuthenticationException.class)
+    public ResponseVo exceptionHandler(HttpServletRequest req, AuthenticationException e){
+        log.error("发生未登录异常！原因是:",e);
+        return ResponseVo.notLogin(e.getMessage());
+    }
 
     /**
      * 处理其他异常
