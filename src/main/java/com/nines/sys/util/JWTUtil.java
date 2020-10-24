@@ -5,20 +5,33 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
 /**
  * @author TYJ
  * @date 2020/10/21 14:43
  */
+@Component
+@Slf4j
 public class JWTUtil {
 
-    @Value("${expireTime}")
-    private static long expireTime;
+    private static long EXPIRE_TIME;
 
-    @Value("${secret}")
-    private static String secret;
+    private static String SECRET;
+
+    @Value("${jwt.minute}")
+    public void setExpireTime(String minute){
+        EXPIRE_TIME = 1000 * 60 * Long.parseLong(minute);
+    }
+
+    @Value("${jwt.secret}")
+    public void setSecret(String secret){
+        SECRET = secret;
+    }
 
     /**
      * 生成签名
@@ -28,9 +41,9 @@ public class JWTUtil {
      */
     public static String sign(String username, String password) {
         // 指定过期时间
-        Date date = new Date(System.currentTimeMillis() + expireTime);
+        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         // 给加密算法传递加密盐
-        Algorithm algorithm = Algorithm.HMAC256(password + secret);
+        Algorithm algorithm = Algorithm.HMAC256(password + SECRET);
         // 附带username信息
         return JWT.create()
                 .withClaim("username", username)
@@ -51,13 +64,14 @@ public class JWTUtil {
     public static boolean verify(String token, String username, String password) {
         try {
             // 给加密算法传递加密盐
-            Algorithm algorithm = Algorithm.HMAC256(password + secret);
+            Algorithm algorithm = Algorithm.HMAC256(password + SECRET);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("username", username)
                     .build();
             verifier.verify(token);
             return true;
         } catch (Exception e) {
+            log.error(e.getMessage());
             return false;
         }
     }

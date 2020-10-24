@@ -21,7 +21,7 @@ public class SysTest {
 
     @Test
     public void getPasswordTest(){
-        SysUser user = userService.getUsernameAndStatusByUsername("root");
+        SysUser user = userService.getUserByUsername("root");
         System.out.println(user.toString());
     }
 

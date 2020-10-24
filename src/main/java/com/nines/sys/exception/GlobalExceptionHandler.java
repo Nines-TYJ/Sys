@@ -28,27 +28,27 @@ public class GlobalExceptionHandler {
     /**
      * 处理空指针的异常
      */
-    @ExceptionHandler(value =NullPointerException.class)
+    @ExceptionHandler(value = NullPointerException.class)
     public ResponseVo exceptionHandler(HttpServletRequest req, NullPointerException e){
-        log.error("发生空指针异常！原因是:",e);
+        log.error("发生空指针异常！原因是:",e.getMessage());
         return ResponseVo.badRequest(e.getMessage());
     }
 
     /**
      * 处理未登录的异常
      */
-    @ExceptionHandler(value =AuthenticationException.class)
+    @ExceptionHandler(value = AuthenticationException.class)
     public ResponseVo exceptionHandler(HttpServletRequest req, AuthenticationException e){
-        log.error("发生未登录异常！原因是:",e);
+        log.error("发生未登录异常！原因是:",e.getMessage());
         return ResponseVo.notLogin(e.getMessage());
     }
 
     /**
      * 处理其他异常
      */
-    @ExceptionHandler(value =Exception.class)
+    @ExceptionHandler(value = Exception.class)
     public ResponseVo exceptionHandler(HttpServletRequest req, Exception e){
-        log.error("未知异常！原因是:",e);
+        log.error("未知异常！原因是:",e.getMessage());
         return ResponseVo.error(e.getMessage());
     }
 

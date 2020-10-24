@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Nines
- * @since 2020-10-20
+ * @since 2020-10-22
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -48,6 +48,11 @@ public class SysUser implements Serializable {
      * 加密盐
      */
     private String salt;
+
+    /**
+     * 手机号
+     */
+    private String phoneNumber;
 
     /**
      * 邮箱

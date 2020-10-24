@@ -1,23 +1,20 @@
-package com.nines.sys.shiro;
+package com.nines.sys.shiro.realm;
 
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
 import com.nines.sys.util.JWTUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author TYJ
@@ -25,30 +22,37 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class CustomRealm extends AuthorizingRealm {
+public class UPRealm extends AuthorizingRealm {
 
     @Resource
     private ISysUserService userService;
 
+    /**
+     * 账号密码登录
+     * @param token 密钥
+     * @return boolean
+     */
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof UsernamePasswordToken;
+    }
+
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        log.info("————身份认证方法————");
-        String token = (String) authenticationToken.getCredentials();
-        String username = JWTUtil.getUsername(token);
+        log.info("————账号密码 认证方法————");
+        UsernamePasswordToken usernamepasswordToken = (UsernamePasswordToken) authenticationToken;
+        String username = usernamepasswordToken.getUsername();
         if (username == null){
-            throw new AuthenticationException("无效的Token");
+            throw new AuthenticationException("用户名为空");
         }
-        SysUser user = userService.getUsernameAndStatusByUsername(username);
+        SysUser user = userService.getUserByUsername(username);
         if (user == null){
             throw new AuthenticationException("用户不存在");
-        }
-        if (!JWTUtil.verify(token, username, user.getPassWord())){
-            throw new AuthenticationException("认证失败");
         }
         if (user.getStatus() == 1){
             throw new AuthenticationException("账号已冻结");
         }
-        return new SimpleAuthenticationInfo(token, token, "MyRealm");
+        return new SimpleAuthenticationInfo(user, user.getPassWord(), ByteSource.Util.bytes(user.getSalt()), "upRealm");
     }
 
     @Override

@@ -9,6 +9,7 @@
         <result column="user_name" property="userName" />
         <result column="pass_word" property="passWord" />
         <result column="salt" property="salt" />
+        <result column="phone_number" property="phoneNumber" />
         <result column="email" property="email" />
         <result column="status" property="status" />
         <result column="create_time" property="createTime" />

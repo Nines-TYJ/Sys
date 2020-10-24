@@ -56,6 +56,17 @@ public class ResponseVo<T> implements Serializable {
     /**
      * 执行成功
      */
+    public static ResponseVo ok(String message) {
+        ResponseVo response = new ResponseVo();
+        response.code = HttpStatus.OK.value();
+        response.message = message;
+        return response;
+    }
+
+
+    /**
+     * 执行成功
+     */
     public static <T> ResponseVo<T> ok(T data) {
         ResponseVo<T> response = new ResponseVo<>();
         response.code = HttpStatus.OK.value();

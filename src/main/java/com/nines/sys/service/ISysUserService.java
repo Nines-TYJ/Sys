@@ -11,16 +11,16 @@ import java.util.List;
  * </p>
  *
  * @author Nines
- * @since 2020-10-20
+ * @since 2020-10-22
  */
 public interface ISysUserService extends IService<SysUser> {
 
     /**
-     * 通过username 获取 用户密码和状态
+     * 通过username 获取 用户信息
      * @param username 用户名
      * @return 用户密码和状态
      */
-    SysUser getUsernameAndStatusByUsername(String username);
+    SysUser getUserByUsername(String username);
 
     /**
      * 通过username 获取 用户角色列表
@@ -35,5 +35,12 @@ public interface ISysUserService extends IService<SysUser> {
      * @return 权限列表
      */
     List<String> getPermCodeByUsername(String username);
+
+    /**
+     * 新增用户
+     * @param user 用户
+     * @return 操作条数
+     */
+    int addUser(SysUser user);
 
 }

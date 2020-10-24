@@ -13,7 +13,7 @@ import java.util.List;
  * </p>
  *
  * @author Nines
- * @since 2020-10-20
+ * @since 2020-10-22
  */
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
@@ -27,4 +27,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
             "select role_id from sys_user_role where user_id = (" +
             "select id from sys_user where user_name = #{username})))")
     List<String> getPermCodeByUsername(@Param("username") String username);
+
 }

@@ -23,7 +23,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     /**
      * 登录标识
      */
-    private static String LOGIN_SIGN = "Authorization";
+    public static String LOGIN_SIGN = "Authorization";
 
     /**
      * 执行登陆操作
@@ -86,6 +86,12 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             return false;
         }
         return super.preHandle(request, response);
+    }
+
+    @Override
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+        responseError(response);
+        return false;
     }
 
     /**
