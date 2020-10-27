@@ -1,10 +1,14 @@
 package com.nines.sys.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.nines.sys.entity.SysUserRole;
 import com.nines.sys.mapper.SysUserRoleMapper;
 import com.nines.sys.service.ISysUserRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +21,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRole> implements ISysUserRoleService {
 
+    @Override
+    public List<SysUserRole> findListByUserId(String userId) {
+        return this.baseMapper.selectList(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, userId));
+    }
+
+    @Override
+    public boolean modifyUserRole(String userId, List<SysUserRole> userRoles) {
+        // 删除用户原来的角色
+        this.baseMapper.deleteById(userId);
+        // 添加新的角色数据
+        if (userRoles.size() > 0){
+            userRoles.forEach(userRole -> {
+                userRole.setCreateTime(LocalDateTime.now());
+                userRole.setUpdateTime(LocalDateTime.now());
+            });
+            return this.baseMapper.insetBatch(userRoles) > 0;
+        }
+        return true;
+    }
 }

@@ -36,54 +36,41 @@ public class SysUserController {
     public ResponseVo getUserInfo(){
         Subject subject = SecurityUtils.getSubject();
         SysUser user = (SysUser) subject.getPrincipal();
-        if (user == null){
-            return ResponseVo.error("未登录");
-        }
         // 返回用户信息
-        return ResponseVo.ok(user);
+        return user == null ? ResponseVo.error("未登录") : ResponseVo.ok(user);
     }
 
     @ApiOperation(value = "获取用户信息", notes = "通过用户ID获取用户信息")
     @ApiImplicitParam(name = "id", value = "用户ID", dataType = "String")
     @GetMapping("/{id}")
     public ResponseVo getOneById(@PathVariable String id){
-        SysUser user = userService.getOneById(id);
-        if (user == null){
-            return ResponseVo.fail("无效的ID");
-        }
-        return ResponseVo.ok(user);
+        SysUser user = userService.findOneById(id);
+        return user == null ? ResponseVo.fail("无效的ID") : ResponseVo.ok(user);
     }
 
     @ApiOperation(value = "用户分页", notes = "用户列表分页")
     @ApiImplicitParam(name = "dataPageVo", value = "分页参数实体", dataType = "DataPageVo")
     @PostMapping("/data_page")
     public ResponseVo getDataPage(@RequestBody DataPageVo dataPageVo){
-        return ResponseVo.ok(userService.getDataPage(dataPageVo));
+        return ResponseVo.ok(userService.findDataPage(dataPageVo));
     }
 
     @ApiOperation(value = "新增或修改数据", notes = "根据ID判断新增或修改数据")
     @PostMapping("/modif")
     public ResponseVo addOrUpdate(@RequestBody SysUser user){
-        int result;
+        boolean result;
         if (StrUtil.hasBlank(user.getId())){
-            result = userService.add(user);
+            result = userService.addUser(user);
         }else {
-            result = userService.update(user);
+            result = userService.updateUser(user);
         }
-        if (result > 0){
-            return ResponseVo.ok("操作成功");
-        }
-        return ResponseVo.fail("操作失败");
+        return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 
     @ApiOperation(value = "删除用户", notes = "根据ID删除数据")
     @ApiImplicitParam(name = "id", value = "用户ID", dataType = "String")
     @PostMapping("/delete/{id}")
     public ResponseVo delete(@PathVariable String id){
-        int result = userService.delete(id);
-        if (result > 0){
-            return ResponseVo.ok("操作成功");
-        }
-        return ResponseVo.fail("操作失败");
+        return userService.deleteUserById(id) ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 }

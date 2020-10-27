@@ -46,7 +46,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public int add(SysUser user) {
+    public boolean addUser(SysUser user) {
         // 昵称为空时直接设置为用户名
         if (StrUtil.hasBlank(user.getNickName())){
             user.setNickName(user.getUserName());
@@ -59,16 +59,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         LocalDateTime dataTime = LocalDateTime.now();
         user.setCreateTime(dataTime);
         user.setUpdateTime(dataTime);
-        return this.baseMapper.insert(user);
+        return this.baseMapper.insert(user) > 0;
     }
 
     @Override
-    public int delete(String id) {
-        return this.baseMapper.deleteById(id);
+    public boolean deleteUserById(String id) {
+        return this.baseMapper.deleteById(id) > 0;
     }
 
     @Override
-    public int update(SysUser user) {
+    public boolean updateUser(SysUser user) {
         SysUser updateUser = new SysUser();
         // 昵称不为空
         if (!StrUtil.hasBlank(user.getNickName())){
@@ -84,16 +84,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         // 更新时间
         updateUser.setUpdateTime(LocalDateTime.now());
-        return this.baseMapper.updateById(updateUser);
+        return this.baseMapper.updateById(updateUser) > 0;
     }
 
     @Override
-    public SysUser getOneById(String id) {
+    public SysUser findOneById(String id) {
         return this.baseMapper.selectById(id);
     }
 
     @Override
-    public Map<String, Object> getDataPage(DataPageVo dataPageVo) {
+    public Map<String, Object> findDataPage(DataPageVo dataPageVo) {
         Page<SysUser> page = new Page <>(dataPageVo.getPage(), dataPageVo.getSize());
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         if (!StrUtil.hasBlank(dataPageVo.getName())){
