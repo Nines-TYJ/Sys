@@ -17,13 +17,11 @@ import static java.util.stream.Collectors.toMap;
 /**
  * @author 刘志远
  * @version 1.00
- * @time 19-4-10 下午8:56
- * @see
  */
 public class MyModularRealmAuthenticator extends ModularRealmAuthenticator {
 
     @Override
-    protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+    protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) {
         List<Realm> list = (List) getRealms();
         Map<Class, Realm> realmMap = list.stream().collect(toMap(Realm::getClass, valObj->valObj));
         if(authenticationToken instanceof UsernamePasswordToken){

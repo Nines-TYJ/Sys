@@ -19,6 +19,9 @@ import java.util.Date;
 @Slf4j
 public class JWTUtil {
 
+    /**
+     *  艾特Value()注解无法直接给静态变量注入值
+     */
     private static long EXPIRE_TIME;
 
     private static String SECRET;
@@ -39,16 +42,20 @@ public class JWTUtil {
      * @param password 密码
      * @return 签名
      */
-    public static String sign(String username, String password) {
+    public static String sign(String username, String password, Long current) {
         // 指定过期时间
-        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        Date date = new Date(current + EXPIRE_TIME);
         // 给加密算法传递加密盐
         Algorithm algorithm = Algorithm.HMAC256(password + SECRET);
         // 附带username信息
         return JWT.create()
                 .withClaim("username", username)
+                // 当前时间戳
+                .withClaim("current", current)
                 //到期时间
                 .withExpiresAt(date)
+                // 签发时间
+                .withIssuedAt(new Date())
                 //创建一个新的JWT，并使用给定的算法进行标记
                 .sign(algorithm);
     }
@@ -57,16 +64,15 @@ public class JWTUtil {
      * 校验token是否正确
      *
      * @param token    密钥
-     * @param username 登录名
+//     * @param username 登录名
      * @param password 密码
      * @return boolean
      */
-    public static boolean verify(String token, String username, String password) {
+    public static boolean verify(String token, String password) {
         try {
             // 给加密算法传递加密盐
             Algorithm algorithm = Algorithm.HMAC256(password + SECRET);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("username", username)
                     .build();
             verifier.verify(token);
             return true;
@@ -86,6 +92,20 @@ public class JWTUtil {
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("username").asString();
+        } catch (JWTDecodeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 获取token创建时间
+     * @param token 密钥
+     * @return 创建的时间戳
+     */
+    public static Long getExpire(String token) {
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("current").asLong();
         } catch (JWTDecodeException e) {
             return null;
         }

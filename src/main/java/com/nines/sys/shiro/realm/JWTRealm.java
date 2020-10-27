@@ -1,9 +1,11 @@
 package com.nines.sys.shiro.realm;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
 import com.nines.sys.shiro.JWTToken;
 import com.nines.sys.util.JWTUtil;
+import com.nines.sys.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -13,6 +15,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * @author TYJ
@@ -21,6 +24,9 @@ import javax.annotation.Resource;
 @Slf4j
 @Component
 public class JWTRealm extends AuthorizingRealm {
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Resource
     private ISysUserService userService;
@@ -39,7 +45,12 @@ public class JWTRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         log.info("————Token 认证方法————");
         String token = (String) authenticationToken.getPrincipal();
-        String username = JWTUtil.getUsername(token);
+        String username;
+        try {
+            username= JWTUtil.getUsername(token);
+        }catch (Exception e){
+            throw new AuthenticationException("token非法，不是规范的token，可能被篡改了，或者过期了");
+        }
         if (username == null){
             throw new AuthenticationException("无效的Token,用户名为空");
         }
@@ -47,13 +58,23 @@ public class JWTRealm extends AuthorizingRealm {
         if (user == null){
             throw new AuthenticationException("用户不存在");
         }
-        if (!JWTUtil.verify(token, user.getUserName(), user.getPassWord())){
-            throw new AuthenticationException("token验证失败");
+        //开始认证，只要AccessToken没有过期，或者refreshToken的时间节点和AccessToken一致即可
+        if (redisUtil.hasKey(username)){
+            //判断AccessToken有无过期
+            if (!JWTUtil.verify(token, user.getPassWord())){
+                throw new TokenExpiredException("token认证失效，token过期");
+            }
+            //判断AccessToken和refreshToken的时间节点是否一致
+            Long current = (Long) redisUtil.get(username);
+            if (!Objects.requireNonNull(JWTUtil.getExpire(token)).equals(current)){
+                throw new AuthenticationException("token已经失效，请重新登录！");
+            }
+            if (user.getStatus() == 1){
+                throw new AuthenticationException("账号已冻结");
+            }
+            return new SimpleAuthenticationInfo(user, token, "jwtRealm");
         }
-        if (user.getStatus() == 1){
-            throw new AuthenticationException("账号已冻结");
-        }
-        return new SimpleAuthenticationInfo(user, token, "jwtRealm");
+        throw new AuthenticationException("token过期或者Token错误！！");
     }
 
     @Override

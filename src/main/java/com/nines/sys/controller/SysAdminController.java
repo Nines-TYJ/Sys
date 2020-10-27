@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
 import com.nines.sys.util.JWTUtil;
-import com.nines.sys.util.PasswordMd5Util;
+import com.nines.sys.util.RedisUtil;
 import com.nines.sys.vo.AccountPasswordVo;
 import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 
 /**
@@ -38,6 +37,9 @@ public class SysAdminController {
 
     @Resource
     private ISysUserService userService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * 判断用户名是否已存在
@@ -115,7 +117,7 @@ public class SysAdminController {
         }
         String rightCode = (String) request.getSession().getAttribute("CAPTCHA_KEY");
         if (rightCode.equals(code)){
-            return ResponseVo.ok();
+            return ResponseVo.ok("验证码通过");
         }
         return ResponseVo.error("验证码错误");
 
@@ -146,10 +148,15 @@ public class SysAdminController {
         UsernamePasswordToken token = new UsernamePasswordToken(accountPasswordVo.getUsername(), accountPasswordVo.getPassword());
         subject.login(token);
         SysUser user = (SysUser) subject.getPrincipal();
-        System.out.println(user.toString());
+        log.info(user.toString());
+        Long current = System.currentTimeMillis();
+        // 生产token
+        String jwtToken = JWTUtil.sign(user.getUserName(), user.getPassWord(), current);
+        // refreshToken加入redis
+        redisUtil.set(user.getUserName(), current, 60 * 60 * 24);
         return ResponseVo.ok(new HashMap<String, String>(1){
             {
-                put("token", JWTUtil.sign(user.getUserName(), user.getPassWord()));
+                put("token", jwtToken);
             }
         });
     }
