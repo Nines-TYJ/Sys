@@ -74,7 +74,7 @@ public class SysAdminController {
         if (isExistsUsername(user.getUserName())){
             return ResponseVo.error("用户名已存在");
         }
-        int result = userService.addUser(user);
+        int result = userService.add(user);
         if (result > 0){
             return ResponseVo.ok("注册成功");
         }
@@ -120,12 +120,11 @@ public class SysAdminController {
             return ResponseVo.ok("验证码通过");
         }
         return ResponseVo.error("验证码错误");
-
     }
 
     @ApiOperation(value = "登录", notes = "账号密码登录")
     @ApiImplicitParam(name = "accountPasswordVo", value = "登录验证类", dataType = "AccountPasswordVo")
-    @PostMapping("/accountPasswordLogin")
+    @PostMapping("/account_password_login")
     public ResponseVo accountPasswordLogin(HttpServletRequest request, @RequestBody AccountPasswordVo accountPasswordVo){
         if (StrUtil.hasBlank(accountPasswordVo.getUsername()) || StrUtil.hasBlank(accountPasswordVo.getPassword())){
             return ResponseVo.error("用户名和密码不能为空");
@@ -152,8 +151,8 @@ public class SysAdminController {
         Long current = System.currentTimeMillis();
         // 生产token
         String jwtToken = JWTUtil.sign(user.getUserName(), user.getPassWord(), current);
-        // refreshToken加入redis
-        redisUtil.set(user.getUserName(), current, 60 * 60 * 24);
+        // refreshToken加入redis 7天内有效
+        redisUtil.set(user.getUserName(), current, 60 * 60 * 24 * 7);
         return ResponseVo.ok(new HashMap<String, String>(1){
             {
                 put("token", jwtToken);
