@@ -24,7 +24,7 @@ import javax.annotation.Resource;
  * @since 2020-10-22
  */
 @RestController
-@Api(description = "后台用户接口")
+@Api(description = "后台用户相关接口")
 @RequestMapping("/sys/user")
 public class SysUserController {
 

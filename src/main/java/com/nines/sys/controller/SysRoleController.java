@@ -6,6 +6,7 @@ import com.nines.sys.entity.SysRole;
 import com.nines.sys.service.ISysRoleService;
 import com.nines.sys.vo.PageVo;
 import com.nines.sys.vo.ResponseVo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/sys/role")
+@Api(description = "后台角色相关接口")
 public class SysRoleController {
 
     @Resource

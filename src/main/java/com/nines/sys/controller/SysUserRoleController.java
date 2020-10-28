@@ -4,6 +4,7 @@ package com.nines.sys.controller;
 import com.nines.sys.entity.SysUserRole;
 import com.nines.sys.service.ISysUserRoleService;
 import com.nines.sys.vo.ResponseVo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys/user_role")
+@Api(description = "后台用户角色相关接口")
 public class SysUserRoleController {
 
     @Resource

@@ -13,15 +13,14 @@ import com.nines.sys.mapper.SysRolePermissionMapper;
 import com.nines.sys.mapper.SysUserRoleMapper;
 import com.nines.sys.service.ISysRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.nines.sys.service.ISysUserRoleService;
 import com.nines.sys.util.MyEnumUtil;
 import com.nines.sys.vo.PageVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,13 +47,15 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     @Override
     public boolean updateRole(SysRole role) {
+        // 不为空且不相等才更新
         SysRole updateRole = this.baseMapper.selectById(role.getId());
-        if (!StrUtil.hasBlank(role.getRemark())){
+        if (!StrUtil.hasBlank(role.getRemark()) && !updateRole.getRemark().equals(role.getRemark())){
             updateRole.setRemark(role.getRemark());
         }
-        if (MyEnumUtil.isInclude(StatusEnum.class, role.getStatus())){
+        if (MyEnumUtil.isInclude(StatusEnum.class, role.getStatus()) && !updateRole.getStatus().equals(role.getStatus())){
             updateRole.setStatus(role.getStatus());
         }
+        updateRole.setUpdateTime(LocalDateTime.now());
         return this.baseMapper.updateById(updateRole) > 0;
     }
 

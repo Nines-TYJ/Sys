@@ -6,6 +6,7 @@ import com.nines.sys.mapper.SysUserRoleMapper;
 import com.nines.sys.service.ISysUserRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,18 +27,20 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
         return this.baseMapper.selectList(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, userId));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean modifyUserRole(String userId, List<SysUserRole> userRoles) {
         // 删除用户原来的角色
-        this.baseMapper.deleteById(userId);
-        // 添加新的角色数据
-        if (userRoles.size() > 0){
-            userRoles.forEach(userRole -> {
-                userRole.setCreateTime(LocalDateTime.now());
-                userRole.setUpdateTime(LocalDateTime.now());
-            });
-            return this.baseMapper.insetBatch(userRoles) > 0;
+        if (this.baseMapper.deleteById(userId) > 0){
+            // 添加新的角色数据
+            if (userRoles.size() > 0){
+                userRoles.forEach(userRole -> {
+                    userRole.setCreateTime(LocalDateTime.now());
+                    userRole.setUpdateTime(LocalDateTime.now());
+                });
+                return this.baseMapper.insetBatch(userRoles) > 0;
+            }
         }
-        return true;
+        return false;
     }
 }
