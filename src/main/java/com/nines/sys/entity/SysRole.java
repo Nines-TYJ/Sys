@@ -42,7 +42,7 @@ public class SysRole implements Serializable {
     /**
      * 0是启用,1是禁用
      */
-    private Boolean status;
+    private Integer status;
 
     /**
      * 创建时间
