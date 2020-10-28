@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2020/10/27 15:24
  */
 @Data
-public class DataPageVo {
+public class PageVo {
 
     private String name;
 

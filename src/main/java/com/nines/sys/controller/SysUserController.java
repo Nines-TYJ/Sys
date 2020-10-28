@@ -4,7 +4,7 @@ package com.nines.sys.controller;
 import cn.hutool.core.util.StrUtil;
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
-import com.nines.sys.vo.DataPageVo;
+import com.nines.sys.vo.PageVo;
 import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -49,10 +49,10 @@ public class SysUserController {
     }
 
     @ApiOperation(value = "用户分页", notes = "用户列表分页")
-    @ApiImplicitParam(name = "dataPageVo", value = "分页参数实体", dataType = "DataPageVo")
+    @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
-    public ResponseVo getDataPage(@RequestBody DataPageVo dataPageVo){
-        return ResponseVo.ok(userService.findDataPage(dataPageVo));
+    public ResponseVo getDataPage(@RequestBody PageVo pageVo){
+        return ResponseVo.ok(userService.findPage(pageVo));
     }
 
     @ApiOperation(value = "新增或修改数据", notes = "根据ID判断新增或修改数据")

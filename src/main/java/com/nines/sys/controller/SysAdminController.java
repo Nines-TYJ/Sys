@@ -47,8 +47,7 @@ public class SysAdminController {
      * @return 是否
      */
     private boolean isExistsUsername(String username){
-        SysUser user = userService.getUserByUsername(username);
-        return user != null;
+        return userService.getUserByUsername(username) != null;
     }
 
     @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在")
@@ -74,11 +73,7 @@ public class SysAdminController {
         if (isExistsUsername(user.getUserName())){
             return ResponseVo.error("用户名已存在");
         }
-        int result = userService.add(user);
-        if (result > 0){
-            return ResponseVo.ok("注册成功");
-        }
-        return ResponseVo.error("注册失败");
+        return userService.addUser(user) ? ResponseVo.ok("注册成功") : ResponseVo.error("注册失败");
     }
 
     @ApiOperation(value = "验证码", notes = "获取验证码图片")

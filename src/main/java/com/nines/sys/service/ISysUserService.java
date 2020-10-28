@@ -2,7 +2,7 @@ package com.nines.sys.service;
 
 import com.nines.sys.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.nines.sys.vo.DataPageVo;
+import com.nines.sys.vo.PageVo;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ public interface ISysUserService extends IService<SysUser> {
     boolean addUser(SysUser user);
 
     /**
-     * 删除数据
+     * 删除用户(同时删除用户角色表关联数据)
      * @param id 用户ID
      * @return 操作条数
      */
@@ -68,8 +68,8 @@ public interface ISysUserService extends IService<SysUser> {
 
     /**
      * 用户数据分页
-     * @param dataPageVo 分页参数
+     * @param pageVo 分页参数
      * @return 用户列表
      */
-    Map<String, Object> findDataPage(DataPageVo dataPageVo);
+    Map<String, Object> findPage(PageVo pageVo);
 }

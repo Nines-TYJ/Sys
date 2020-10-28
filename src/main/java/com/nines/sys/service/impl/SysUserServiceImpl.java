@@ -5,13 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nines.sys.entity.SysUser;
+import com.nines.sys.entity.SysUserRole;
+import com.nines.sys.enums.StatusEnum;
 import com.nines.sys.mapper.SysUserMapper;
+import com.nines.sys.mapper.SysUserRoleMapper;
 import com.nines.sys.service.ISysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.nines.sys.util.MyEnumUtil;
 import com.nines.sys.util.PasswordMd5Util;
-import com.nines.sys.vo.DataPageVo;
+import com.nines.sys.vo.PageVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +33,9 @@ import java.util.Map;
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
+
+    @Resource
+    private SysUserRoleMapper userRoleMapper;
 
     @Override
     public SysUser getUserByUsername(String username) {
@@ -62,14 +71,27 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return this.baseMapper.insert(user) > 0;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteUserById(String id) {
-        return this.baseMapper.deleteById(id) > 0;
+        SysUser user = this.baseMapper.selectById(id);
+        // 用户不存在
+        if (user == null){
+            return false;
+        }
+        // 用户删除成功
+        if (this.baseMapper.deleteById(id) > 0){
+            // 删除用户角色中关联的角色
+            userRoleMapper.delete(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, id));
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean updateUser(SysUser user) {
-        SysUser updateUser = new SysUser();
+        // 查出原来数据，在原来数据的基础上修改，避免重要字段被恶意修改
+        SysUser updateUser = this.baseMapper.selectById(user.getId());
         // 昵称不为空
         if (!StrUtil.hasBlank(user.getNickName())){
             updateUser.setNickName(user.getNickName());
@@ -78,8 +100,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (!StrUtil.hasBlank(user.getEmail())){
             updateUser.setEmail(user.getEmail());
         }
-        // 修改状态
-        if (user.getStatus() != null){
+        // 修改状态 先判断状态是否在enum中
+        if (MyEnumUtil.isInclude(StatusEnum.class, user.getStatus())){
             updateUser.setStatus(user.getStatus());
         }
         // 更新时间
@@ -93,11 +115,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public Map<String, Object> findDataPage(DataPageVo dataPageVo) {
-        Page<SysUser> page = new Page <>(dataPageVo.getPage(), dataPageVo.getSize());
+    public Map<String, Object> findPage(PageVo pageVo) {
+        Page<SysUser> page = new Page<>(pageVo.getPage(), pageVo.getSize());
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        if (!StrUtil.hasBlank(dataPageVo.getName())){
-            queryWrapper.like("name", dataPageVo.getName());
+        if (!StrUtil.hasBlank(pageVo.getName())){
+            queryWrapper.like("name", pageVo.getName());
         }
         IPage<SysUser> iPage = this.baseMapper.selectPage(page, queryWrapper);
         Map<String, Object> dataPage = new HashMap<>();
