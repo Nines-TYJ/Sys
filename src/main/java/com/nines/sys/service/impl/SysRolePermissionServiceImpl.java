@@ -30,16 +30,20 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean modifyUserRole(String roleId, List<SysRolePermission> rolePermissions) {
-        // 删除原来角色的权限
-        if (this.baseMapper.deleteById(roleId) > 0){
-            // 添加新的角色的权限
-            if (rolePermissions.size() > 0){
-                rolePermissions.forEach(rolePermission -> {
-                    rolePermission.setCreateTime(LocalDateTime.now());
-                    rolePermission.setUpdateTime(LocalDateTime.now());
-                });
-                return this.baseMapper.insetBatch(rolePermissions) > 0;
+        List<SysRolePermission> rolePermissionList = this.baseMapper.selectList(new QueryWrapper<SysRolePermission>().lambda().eq(SysRolePermission::getRoleId, roleId));
+        if (rolePermissionList.size() > 0){
+            // 删除原来角色的权限
+            if (this.baseMapper.delete(new QueryWrapper<SysRolePermission>().lambda().eq(SysRolePermission::getRoleId, roleId)) != rolePermissionList.size()){
+                throw new RuntimeException("删除条数与查出条数不符");
             }
+        }
+        // 添加新的角色的权限
+        if (rolePermissions.size() > 0){
+            rolePermissions.forEach(rolePermission -> {
+                rolePermission.setCreateTime(LocalDateTime.now());
+                rolePermission.setUpdateTime(LocalDateTime.now());
+            });
+            return this.baseMapper.insetBatch(rolePermissions) > 0;
         }
         return false;
     }

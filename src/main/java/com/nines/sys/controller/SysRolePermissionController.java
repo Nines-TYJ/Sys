@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2020-10-20
  */
 @RestController
-@RequestMapping("/sys/role/permission")
+@RequestMapping("/sys/role_permission")
 @Api(description = "后台角色权限相关接口")
 public class SysRolePermissionController {
 

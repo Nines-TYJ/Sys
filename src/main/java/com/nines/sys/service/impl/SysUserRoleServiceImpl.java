@@ -2,6 +2,7 @@ package com.nines.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.nines.sys.entity.SysUserRole;
+import com.nines.sys.exception.BizException;
 import com.nines.sys.mapper.SysUserRoleMapper;
 import com.nines.sys.service.ISysUserRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,16 +31,20 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean modifyUserRole(String userId, List<SysUserRole> userRoles) {
-        // 删除用户原来的角色
-        if (this.baseMapper.deleteById(userId) > 0){
-            // 添加新的角色数据
-            if (userRoles.size() > 0){
-                userRoles.forEach(userRole -> {
-                    userRole.setCreateTime(LocalDateTime.now());
-                    userRole.setUpdateTime(LocalDateTime.now());
-                });
-                return this.baseMapper.insetBatch(userRoles) > 0;
+        List<SysUserRole> userRoleList = this.baseMapper.selectList(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, userId));
+        if (userRoleList.size() > 0){
+            // 删除用户原来的角色
+            if (this.baseMapper.delete(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, userId)) != userRoleList.size()){
+                throw new BizException("删除条数与查找条数不符");
             }
+        }
+        // 添加新的角色数据
+        if (userRoles.size() > 0){
+            userRoles.forEach(userRole -> {
+                userRole.setCreateTime(LocalDateTime.now());
+                userRole.setUpdateTime(LocalDateTime.now());
+            });
+            return this.baseMapper.insetBatch(userRoles) > 0;
         }
         return false;
     }

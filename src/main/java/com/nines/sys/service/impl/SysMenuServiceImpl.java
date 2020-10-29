@@ -103,23 +103,21 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     private List<MenuTreeNodeVo> addNodeToTree(List<SysMenu> menuList){
         // 创建树
         List<MenuTreeNodeVo> tree = new ArrayList<>();
-        // 子节点
-        List childrenList = new ArrayList();
         // 遍历菜单
         menuList.forEach(menu -> {
-            // 查询菜单是否有子菜单
+            // 判断是否还有子菜单
             List<SysMenu> childrenMenuList = findMenuList(menu.getId());
             if (childrenMenuList.size() > 0){
-                // 递归获取子树
                 List<MenuTreeNodeVo> childrenTree = addNodeToTree(childrenMenuList);
-                childrenList.addAll(childrenTree);
+                tree.add(new MenuTreeNodeVo(menu.getId(), menu.getName(), childrenTree));
             }
-            // 查询菜单下是否有权限
             List<SysPermission> childrenPermissionList = findPermissionList(menu.getId());
+            // 查询菜单是否有权限
             if (childrenPermissionList.size() > 0){
-                childrenList.addAll(childrenPermissionList);
+                List<MenuTreeNodeVo> childrenTree = new ArrayList<>();
+                childrenPermissionList.forEach(childrenPermission -> childrenTree.add(new MenuTreeNodeVo(childrenPermission.getId(), childrenPermission.getName(), null)));
+                tree.add(new MenuTreeNodeVo(menu.getId(), menu.getName(), childrenTree));
             }
-            tree.add(new MenuTreeNodeVo(menu.getName(), childrenList));
         });
         return tree;
     }

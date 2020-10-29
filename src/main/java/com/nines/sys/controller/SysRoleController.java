@@ -45,7 +45,7 @@ public class SysRoleController {
     }
 
     @ApiOperation(value = "新增或修改数据", notes = "根据ID判断新增或修改数据")
-    @PostMapping("/modif")
+    @PostMapping("/modify")
     public ResponseVo addOrUpdate(@RequestBody SysRole role){
         boolean result;
         if (StrUtil.hasBlank(role.getId())){

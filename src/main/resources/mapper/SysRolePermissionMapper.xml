@@ -14,8 +14,8 @@
 
     <insert id="insetBatch">
         INSERT INTO sys_role_permission(id, role_id, permission_id, create_time, update_time)VALUES
-        <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item.roleId}, #{item.permissionId}, #{item.createTime}, #{item.updateTime}
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.roleId}, #{item.permissionId}, #{item.createTime}, #{item.updateTime})
         </foreach>
     </insert>
 

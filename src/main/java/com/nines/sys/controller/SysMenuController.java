@@ -37,7 +37,7 @@ public class SysMenuController {
 
     @ApiOperation(value = "添加或修改数据", notes = "根据id判断应添加还是修改")
     @ApiImplicitParam(name = "menu", value = "菜单实体", dataType = "SysMenu")
-    @PostMapping("/modif")
+    @PostMapping("/modify")
     public ResponseVo addOrUpdate(@RequestBody SysMenu menu){
         boolean result;
         if (menu.getId() == null){

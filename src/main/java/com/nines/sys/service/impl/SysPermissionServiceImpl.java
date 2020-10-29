@@ -30,7 +30,18 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
 
     @Override
     public boolean addPermission(SysPermission permission) {
-        return false;
+        if (StrUtil.hasBlank(permission.getMenuId())){
+            return false;
+        }
+        if (StrUtil.hasBlank(permission.getName())){
+            return false;
+        }
+        if (StrUtil.hasBlank(permission.getPermCode())){
+            return false;
+        }
+        permission.setCreateTime(LocalDateTime.now());
+        permission.setUpdateTime(LocalDateTime.now());
+        return this.baseMapper.insert(permission) > 0;
     }
 
     @Override

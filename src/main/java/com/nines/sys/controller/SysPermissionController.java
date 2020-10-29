@@ -47,8 +47,10 @@ public class SysPermissionController {
     @ApiOperation(value = "修改数据", notes = "根据ID修改数据")
     @PostMapping("/modif")
     public ResponseVo update(@RequestBody SysPermission permission){
-        boolean result = false;
-        if (!StrUtil.hasBlank(permission.getId())){
+        boolean result;
+        if (StrUtil.hasBlank(permission.getId())){
+            result = permissionService.addPermission(permission);
+        }else {
             result = permissionService.updatePermission(permission);
         }
         return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
