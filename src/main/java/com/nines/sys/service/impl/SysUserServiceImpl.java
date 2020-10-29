@@ -56,6 +56,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public boolean addUser(SysUser user) {
+        // username 不能为空
+        if (StrUtil.hasBlank(user.getUserName())){
+            return false;
+        }
+        // password 不能为空
+        if (StrUtil.hasBlank(user.getPassWord())){
+            return false;
+        }
         // 昵称为空时直接设置为用户名
         if (StrUtil.hasBlank(user.getNickName())){
             user.setNickName(user.getUserName());

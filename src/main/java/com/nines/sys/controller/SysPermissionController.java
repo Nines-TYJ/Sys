@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @since 2020-10-21
  */
 @RestController
-@RequestMapping("/sysPermission")
+@RequestMapping("/sys/permission")
 @Api(description = "后台权限相关接口")
 public class SysPermissionController {
 
@@ -46,8 +46,12 @@ public class SysPermissionController {
 
     @ApiOperation(value = "修改数据", notes = "根据ID修改数据")
     @PostMapping("/modif")
-    public ResponseVo addOrUpdate(@RequestBody SysPermission permission){
-        return permissionService.updatePermission(permission) ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
+    public ResponseVo update(@RequestBody SysPermission permission){
+        boolean result = false;
+        if (!StrUtil.hasBlank(permission.getId())){
+            result = permissionService.updatePermission(permission);
+        }
+        return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 
 }

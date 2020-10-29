@@ -42,6 +42,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     @Override
     public boolean addRole(SysRole role) {
+        // 角色名不能为空
+        if (StrUtil.hasBlank(role.getName())){
+            return false;
+        }
+        role.setCreateTime(LocalDateTime.now());
+        role.setUpdateTime(LocalDateTime.now());
         return this.baseMapper.insert(role) > 0;
     }
 
