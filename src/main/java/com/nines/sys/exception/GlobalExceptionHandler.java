@@ -5,6 +5,7 @@ import com.nines.sys.vo.ResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -61,6 +62,15 @@ public class GlobalExceptionHandler {
     public ResponseVo handler(TokenExpiredException e){
         log.error("token过期！原因是：{}",e.getMessage());
         return ResponseVo.fail("token已经过期，请重新登录");
+    }
+
+    /**
+     * 请求没有请求体
+     */
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public ResponseVo handler(HttpMessageNotReadableException e){
+        log.error("空的请求体");
+        return ResponseVo.fail("空的请求体");
     }
 
     /**

@@ -2,6 +2,9 @@ package com.nines.sys.service;
 
 import com.nines.sys.entity.SysMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.nines.sys.vo.MenuTreeNodeVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -28,7 +31,7 @@ public interface ISysMenuService extends IService<SysMenu> {
     boolean updateMeun(SysMenu menu);
 
     /**
-     * 删除菜单（同时将菜单下的子菜单与功能给上级菜单）
+     * 删除菜单（如果该菜单下存在权限，不允许删除）
      * @param id 菜单ID
      * @return 成功与否
      */
@@ -40,5 +43,11 @@ public interface ISysMenuService extends IService<SysMenu> {
      * @return 菜单实体
      */
     SysMenu findOneById(String id);
+
+    /**
+     * 生产菜单权限树
+     * @return 树
+     */
+    List<MenuTreeNodeVo> createTree();
 
 }

@@ -2,12 +2,14 @@ package com.nines.sys.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author TYJ
  * @date 2020/10/27 15:24
  */
 @Data
-public class PageVo {
+public class PageVo implements Serializable {
 
     private String name;
 

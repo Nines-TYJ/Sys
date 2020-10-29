@@ -10,12 +10,12 @@ import com.nines.sys.mapper.SysPermissionMapper;
 import com.nines.sys.service.ISysMenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nines.sys.util.MyEnumUtil;
-import com.sun.xml.internal.bind.v2.model.core.ID;
+import com.nines.sys.vo.MenuTreeNodeVo;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,7 +68,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         return this.baseMapper.updateById(updateMeun) > 0;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteMeunById(String id) {
         SysMenu meun = this.baseMapper.selectById(id);
@@ -76,24 +75,81 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         if (meun == null){
             return false;
         }
-        if (this.baseMapper.deleteById(id) > 0){
-            // 修改子级菜单的父级id为当前菜单的父级ID
-            List<SysMenu> childMeunList = this.baseMapper.selectList(new QueryWrapper<SysMenu>().lambda().eq(SysMenu::getParentId, id));
-            if (childMeunList.size() > 0){
-                childMeunList.forEach(childMeun -> childMeun.setParentId(meun.getParentId()));
-            }
-            // 修改权限的菜单id为当前菜单的父级菜单ID
-            List<SysPermission> childPermissionList = permissionMapper.selectList(new QueryWrapper<SysPermission>().lambda().eq(SysPermission::getMenuId, id));
-            if (childPermissionList.size() > 0){
-                childPermissionList.forEach(childPermission -> childPermission.setMenuId(meun.getParentId()));
-            }
-            return true;
+        // 判断该菜单下是否还有子菜单
+        if (this.baseMapper.selectList(new QueryWrapper<SysMenu>().lambda().eq(SysMenu::getParentId, id)).size() > 0){
+            return false;
         }
-        return false;
+        // 判断该菜单下是否还有权限
+        if (permissionMapper.selectList(new QueryWrapper<SysPermission>().lambda().eq(SysPermission::getMenuId, id)).size() > 0){
+            return false;
+        }
+        // 删除菜单
+        return this.baseMapper.deleteById(id) > 0;
     }
 
     @Override
     public SysMenu findOneById(String id) {
         return this.baseMapper.selectById(id);
     }
+
+    @Override
+    public List<MenuTreeNodeVo> createTree() {
+        // 找到顶级菜单或权限
+        List<SysMenu> menuList = findMenuList("0");
+        return addNodeToTree(menuList);
+    }
+
+
+    private List<MenuTreeNodeVo> addNodeToTree(List<SysMenu> menuList){
+        // 创建树
+        List<MenuTreeNodeVo> tree = new ArrayList<>();
+        // 子节点
+        List childrenList = new ArrayList();
+        // 遍历菜单
+        menuList.forEach(menu -> {
+            // 查询菜单是否有子菜单
+            List<SysMenu> childrenMenuList = findMenuList(menu.getId());
+            if (childrenMenuList.size() > 0){
+                // 递归获取子树
+                List<MenuTreeNodeVo> childrenTree = addNodeToTree(childrenMenuList);
+                childrenList.addAll(childrenTree);
+            }
+            // 查询菜单下是否有权限
+            List<SysPermission> childrenPermissionList = findPermissionList(menu.getId());
+            if (childrenPermissionList.size() > 0){
+                childrenList.addAll(childrenPermissionList);
+            }
+            tree.add(new MenuTreeNodeVo(menu.getName(), childrenList));
+        });
+        return tree;
+    }
+
+    /**
+     * 通过父级菜单id获取菜单列表
+     * @param parentId 父级ID
+     * @return 菜单列表
+     */
+    private List<SysMenu> findMenuList(String parentId){
+        return this.baseMapper.selectList(new QueryWrapper<SysMenu>().lambda()
+                .eq(SysMenu::getParentId, parentId)
+                // 只获取状态正常的
+                .eq(SysMenu::getStatus, StatusEnum.NORMAL.getValue())
+                // 升序排列
+                .orderByAsc(SysMenu::getSort));
+    }
+
+    /**
+     * 通过菜单id获取权限列表
+     * @param menuId 菜单id
+     * @return 权限列表
+     */
+    private List<SysPermission> findPermissionList(String menuId){
+        return permissionMapper.selectList(new QueryWrapper<SysPermission>().lambda()
+                .eq(SysPermission::getMenuId, menuId)
+                // 只获取状态正常的
+                .eq(SysPermission::getStatus, StatusEnum.NORMAL.getValue())
+                // 升序排列
+                .orderByAsc(SysPermission::getSort));
+    }
+
 }

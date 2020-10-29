@@ -48,4 +48,10 @@ public class SysMenuController {
         return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 
+    @ApiOperation(value = "菜单权限树", notes = "获取菜单权限树")
+    @GetMapping("/tree")
+    public ResponseVo findMenuTree(){
+        return ResponseVo.ok(menuService.createTree());
+    }
+
 }
