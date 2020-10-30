@@ -76,8 +76,9 @@ public class CodeGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.nines.sys");
-        pc.setController("controller");// 这里是控制器包名，默认 web
+        pc.setParent("com.nines.sys.generator");
+        // 这里是控制器包名，默认 web
+        pc.setController("controller");
         pc.setEntity("entity");
         pc.setMapper("mapper");
         pc.setService("service");

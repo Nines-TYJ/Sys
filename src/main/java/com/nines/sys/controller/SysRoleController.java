@@ -9,6 +9,8 @@ import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
  * @author Nines
  * @since 2020-10-20
  */
+@RequiresAuthentication
 @RestController
 @RequestMapping("/sys/role")
 @Api(description = "后台角色相关接口")
@@ -29,6 +32,7 @@ public class SysRoleController {
     @Resource
     private ISysRoleService roleService;
 
+    @RequiresPermissions({"role:insert"})
     @ApiOperation(value = "获取角色信息", notes = "通过角色ID获取角色信息")
     @ApiImplicitParam(name = "id", value = "角色ID", dataType = "String")
     @GetMapping("/{id}")
@@ -37,6 +41,7 @@ public class SysRoleController {
         return role == null ? ResponseVo.fail("无效的ID") : ResponseVo.ok(role);
     }
 
+    @RequiresPermissions({"role:select"})
     @ApiOperation(value = "角色分页", notes = "角色列表分页")
     @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
@@ -44,6 +49,7 @@ public class SysRoleController {
         return ResponseVo.ok(roleService.findPage(pageVo));
     }
 
+    @RequiresPermissions({"role:inset", "role:update"})
     @ApiOperation(value = "新增或修改数据", notes = "根据ID判断新增或修改数据")
     @PostMapping("/modify")
     public ResponseVo addOrUpdate(@RequestBody SysRole role){
@@ -56,6 +62,7 @@ public class SysRoleController {
         return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 
+    @RequiresPermissions({"role:delete"})
     @ApiOperation(value = "删除角色", notes = "根据ID删除数据")
     @ApiImplicitParam(name = "id", value = "角色ID", dataType = "String")
     @PostMapping("/delete/{id}")

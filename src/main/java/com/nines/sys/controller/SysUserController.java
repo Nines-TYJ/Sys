@@ -44,6 +44,7 @@ public class SysUserController {
         return user == null ? ResponseVo.error("未登录") : ResponseVo.ok(user);
     }
 
+    @RequiresPermissions({"user:select"})
     @ApiOperation(value = "获取用户信息", notes = "通过用户ID获取用户信息")
     @ApiImplicitParam(name = "id", value = "用户ID", dataType = "String")
     @GetMapping("/{id}")
@@ -52,6 +53,7 @@ public class SysUserController {
         return user == null ? ResponseVo.fail("无效的ID") : ResponseVo.ok(user);
     }
 
+    @RequiresPermissions({"user:select"})
     @ApiOperation(value = "用户分页", notes = "用户列表分页")
     @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
@@ -59,6 +61,7 @@ public class SysUserController {
         return ResponseVo.ok(userService.findPage(pageVo));
     }
 
+    @RequiresPermissions({"user:insert", "user:update"})
     @ApiOperation(value = "新增或修改数据", notes = "根据ID判断新增或修改数据")
     @PostMapping("/modify")
     public ResponseVo addOrUpdate(@RequestBody SysUser user){
@@ -71,6 +74,7 @@ public class SysUserController {
         return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 
+    @RequiresPermissions({"user:delete"})
     @ApiOperation(value = "删除用户", notes = "根据ID删除数据")
     @ApiImplicitParam(name = "id", value = "用户ID", dataType = "String")
     @PostMapping("/delete/{id}")

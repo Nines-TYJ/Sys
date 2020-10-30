@@ -8,6 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ import java.util.List;
  * @author Nines
  * @since 2020-10-20
  */
+@RequiresAuthentication
 @RestController
 @RequestMapping("/sys/role_permission")
 @Api(description = "后台角色权限相关接口")
@@ -29,7 +32,8 @@ public class SysRolePermissionController {
     @Resource
     private ISysRolePermissionService rolePermissionService;
 
-    @ApiOperation(value = "获取用户角色列表", notes = "根据UserId获取用户角色列表")
+    @RequiresPermissions({"role:select"})
+    @ApiOperation(value = "获取角色权限列表", notes = "根据UserId获取角色权限列表")
     @ApiImplicitParam(name = "id", value = "用户ID", dataType = "String")
     @GetMapping("/{id}")
     public ResponseVo findListByUserId(@PathVariable String id){
@@ -37,14 +41,15 @@ public class SysRolePermissionController {
         return ResponseVo.ok(userRoleList);
     }
 
-    @ApiOperation(value = "修改用户角色列表", notes = "修改用户角色列表")
+    @RequiresPermissions({"role:distribution"})
+    @ApiOperation(value = "修改角色权限列表", notes = "修改角色权限列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "用户ID", dataType = "String"),
             @ApiImplicitParam(name = "userRoleList", value = "用户角色列表", dataType = "List<SysUserRole>")
     })
     @PostMapping("/modify/{id}")
-    public ResponseVo modifyUserRole(@PathVariable String id, @RequestBody List<SysRolePermission> RolePermissionList){
-        return rolePermissionService.modifyUserRole(id, RolePermissionList) ? ResponseVo.ok("分配成功") : ResponseVo.fail("分配失败");
+    public ResponseVo modifyUserRole(@PathVariable String id, @RequestBody List<SysRolePermission> rolePermissionList){
+        return rolePermissionService.modifyUserRole(id, rolePermissionList) ? ResponseVo.ok("分配成功") : ResponseVo.fail("分配失败");
     }
 
 }

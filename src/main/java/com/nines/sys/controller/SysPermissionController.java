@@ -9,6 +9,8 @@ import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
  * @author Nines
  * @since 2020-10-21
  */
+@RequiresAuthentication
 @RestController
 @RequestMapping("/sys/permission")
 @Api(description = "后台权限相关接口")
@@ -29,6 +32,7 @@ public class SysPermissionController {
     @Resource
     private ISysPermissionService permissionService;
 
+    @RequiresPermissions({"permission:select"})
     @ApiOperation(value = "获取权限信息", notes = "通过权限ID获取权限信息")
     @ApiImplicitParam(name = "id", value = "权限ID", dataType = "String")
     @GetMapping("/{id}")
@@ -37,6 +41,7 @@ public class SysPermissionController {
         return permission == null ? ResponseVo.fail("无效的ID") : ResponseVo.ok(permission);
     }
 
+    @RequiresPermissions({"permission:select"})
     @ApiOperation(value = "权限分页", notes = "权限列表分页")
     @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
@@ -44,6 +49,7 @@ public class SysPermissionController {
         return ResponseVo.ok(permissionService.findPage(pageVo));
     }
 
+    @RequiresPermissions({"permission:insert", "permission:update"})
     @ApiOperation(value = "修改数据", notes = "根据ID修改数据")
     @PostMapping("/modif")
     public ResponseVo update(@RequestBody SysPermission permission){
