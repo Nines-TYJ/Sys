@@ -153,13 +153,12 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     private String refreshToken(ServletRequest request, ServletResponse response){
         HttpServletRequest req = (HttpServletRequest) request;
-        RedisUtil redisUtil = getBean(RedisUtil.class, req);
         // 获取传递过来的accessToken
         String accessToken = req.getHeader(LOGIN_SIGN);
         // 获取token里面的用户名
         String username = JWTUtil.getUsername(accessToken);
         // 判断refreshToken是否过期，过期后redis中的username就不存在
-        if (RedisUtil.hasKey(username)){
+        if (RedisUtil.hasKey(PREFIX_SHIRO_TOKEN + username)){
             //判断refresh的时间节点和传递过来的accessToken的时间节点是否一致，不一致校验失败
             Long tokenCurrent = (Long) RedisUtil.get(PREFIX_SHIRO_TOKEN + username);
             if (Objects.requireNonNull(JWTUtil.getExpire(accessToken)).equals(tokenCurrent)){

@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2020/10/29 10:49
  */
 @Data
-public class MenuTreeNodeVo implements Serializable {
+public class TreeNode implements Serializable {
 
     /**
      * 节点ID
@@ -28,10 +28,10 @@ public class MenuTreeNodeVo implements Serializable {
      */
     private List children;
 
-    public MenuTreeNodeVo() {
+    public TreeNode() {
     }
 
-    public MenuTreeNodeVo(String id, String label, List children) {
+    public TreeNode(String id, String label, List children) {
         this.id = id;
         this.label = label;
         this.children = children;

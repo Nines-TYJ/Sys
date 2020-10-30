@@ -1,12 +1,13 @@
 package com.nines.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -14,7 +15,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Nines
- * @since 2020-10-21
+ * @since 2020-10-30
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -30,9 +31,9 @@ public class SysPermission implements Serializable {
     private String id;
 
     /**
-     * 所属菜单ID
+     * 父级ID
      */
-    private String menuId;
+    private String parentId;
 
     /**
      * 权限名称
@@ -45,14 +46,14 @@ public class SysPermission implements Serializable {
     private String remark;
 
     /**
-     * 排序
-     */
-    private Integer sort;
-
-    /**
      * 权限编码
      */
     private String permCode;
+
+    /**
+     * 排序
+     */
+    private Integer sort;
 
     /**
      * 0是启用,1是禁用

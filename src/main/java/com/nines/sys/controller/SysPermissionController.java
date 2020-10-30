@@ -6,6 +6,7 @@ import com.nines.sys.entity.SysPermission;
 import com.nines.sys.service.ISysPermissionService;
 import com.nines.sys.vo.PageVo;
 import com.nines.sys.vo.ResponseVo;
+import com.nines.sys.vo.TreeNode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +15,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -62,4 +64,11 @@ public class SysPermissionController {
         return result ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
     }
 
+    @RequiresPermissions({"role:distribution"})
+    @ApiOperation(value = "创建权限树", notes = "创建权限树")
+    @GetMapping("/tree")
+    public ResponseVo findTree(){
+        List<TreeNode> tree = permissionService.createTree();
+        return ResponseVo.ok(tree);
+    }
 }

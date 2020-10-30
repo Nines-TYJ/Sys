@@ -2,8 +2,8 @@ package com.nines.sys.service;
 
 import com.nines.sys.entity.SysPermission;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.nines.sys.vo.MenuTreeNodeVo;
 import com.nines.sys.vo.PageVo;
+import com.nines.sys.vo.TreeNode;
 
 import java.util.List;
 import java.util.Map;
@@ -57,6 +57,6 @@ public interface ISysPermissionService extends IService<SysPermission> {
      * 生产菜单权限树
      * @return 树
      */
-//    List<MenuTreeNodeVo> createTree();
-    
+    List<TreeNode> createTree();
+
 }
