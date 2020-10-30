@@ -1,5 +1,5 @@
 # Sys
-sys项目脚手架
+权限管理项目脚手架
 
 ## 说明
 单独将权限管理后台写成一个模块，方便后续开新项目直接集成
@@ -13,7 +13,7 @@ Swagger2 API
 
 MybatisPuls
 
-Shiro + Jwt 单点登录
+Shiro + Jwt + redis 单点登录,token自动刷新,权限缓存到redis中
 
 Aspect切面做日志管理
 

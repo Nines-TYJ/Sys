@@ -15,7 +15,7 @@ public class Constant {
     /**
      * token 有效时间（分钟）
      */
-    public static final long JWT_MINUTE = 30;
+    public static final long JWT_MINUTE = 60;
 
     /**
      * 密码加密盐
@@ -30,7 +30,7 @@ public class Constant {
     /**
      * 权限缓存 有效时间（分钟）
      */
-    public static final long SHIRO_CACHE_EXPIRE_TIME = 1;
+    public static final long SHIRO_CACHE_EXPIRE_TIME = 15;
 
     /**
      * shiro token缓存前缀
