@@ -1,4 +1,4 @@
-package com.nines.sys.shiro;
+package com.nines.sys.config.shiro.jwt;
 
 import org.apache.shiro.authc.AuthenticationToken;
 

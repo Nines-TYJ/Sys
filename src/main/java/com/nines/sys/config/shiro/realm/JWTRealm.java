@@ -1,9 +1,10 @@
-package com.nines.sys.shiro.realm;
+package com.nines.sys.config.shiro.realm;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
-import com.nines.sys.shiro.JWTToken;
+import com.nines.sys.config.shiro.jwt.JWTToken;
+import com.nines.sys.util.Constant;
 import com.nines.sys.util.JWTUtil;
 import com.nines.sys.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,9 @@ import java.util.Objects;
 public class JWTRealm extends AuthorizingRealm {
 
     @Resource
-    private RedisUtil redisUtil;
-
-    @Resource
     private ISysUserService userService;
+
+    private static final String PREFIX_SHIRO_TOKEN = Constant.PREFIX_SHIRO_TOKEN;
 
     /**
      * token登录
@@ -59,13 +59,13 @@ public class JWTRealm extends AuthorizingRealm {
             throw new AuthenticationException("用户不存在");
         }
         //开始认证，只要AccessToken没有过期，或者refreshToken的时间节点和AccessToken一致即可
-        if (redisUtil.hasKey(username)){
+        if (RedisUtil.hasKey(PREFIX_SHIRO_TOKEN + username)){
             //判断AccessToken有无过期
             if (!JWTUtil.verify(token, user.getPassWord())){
                 throw new TokenExpiredException("token认证失效，token过期");
             }
             //判断AccessToken和refreshToken的时间节点是否一致
-            Long current = (Long) redisUtil.get(username);
+            Long current = (Long) RedisUtil.get(PREFIX_SHIRO_TOKEN + username);
             if (!Objects.requireNonNull(JWTUtil.getExpire(token)).equals(current)){
                 throw new AuthenticationException("token已经失效，请重新登录！");
             }

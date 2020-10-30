@@ -1,8 +1,9 @@
-package com.nines.sys.shiro;
+package com.nines.sys.config.shiro.jwt;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nines.sys.service.ISysUserService;
+import com.nines.sys.util.Constant;
 import com.nines.sys.util.JWTUtil;
 import com.nines.sys.util.RedisUtil;
 import com.nines.sys.vo.ResponseVo;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,17 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     /**
      * 登录标识
      */
-    public static String LOGIN_SIGN = "Authorization";
+    private static final String LOGIN_SIGN = Constant.LOGIN_SIGN;
+
+    /**
+     * shiro token缓存前缀
+     */
+    private static final String PREFIX_SHIRO_TOKEN = Constant.PREFIX_SHIRO_TOKEN;
+
+    /**
+     * token缓存 有效时间（分钟）
+     */
+    private static final long SHIRO_TOKEN_EXPIRE_TIME = 1000 * 60 * Constant.SHIRO_TOKEN_EXPIRE_TIME;
 
     /**
      * 执行登陆操作
@@ -91,7 +101,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             }
         }
         //如果请求头不存在 Token，则可能是执行登陆操作或者是游客状态访问，无需检查 token，直接返回 true
-        return true;
+        return false;
     }
 
     /**
@@ -127,16 +137,16 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         httpServletResponse.setContentType("application/json");
         try {
             OutputStream out = httpServletResponse.getOutputStream();
-            out.write(Integer.parseInt(new ObjectMapper().writeValueAsString(ResponseVo.notAccess(message))));
+            out.write(new ObjectMapper().writeValueAsString(ResponseVo.notAccess(message)).getBytes());
 //            httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(ResponseVo.notLogin(message)));
-            httpServletResponse.getWriter().flush();
-            httpServletResponse.getWriter().close();
+            out.flush();
+            out.close();
         }catch (Exception ex){
-            log.error("回写数据发生错误");
+            log.error("回写数据发生错误: {}", ex);
         }
     }
 
-    public <T> T getBean(Class<T> clazz, HttpServletRequest request){
+    private  <T> T getBean(Class<T> clazz, HttpServletRequest request){
         WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
         return applicationContext.getBean(clazz);
     }
@@ -145,13 +155,13 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         HttpServletRequest req = (HttpServletRequest) request;
         RedisUtil redisUtil = getBean(RedisUtil.class, req);
         // 获取传递过来的accessToken
-        String accessToken = req.getHeader("Authorization");
+        String accessToken = req.getHeader(LOGIN_SIGN);
         // 获取token里面的用户名
         String username = JWTUtil.getUsername(accessToken);
         // 判断refreshToken是否过期，过期后redis中的username就不存在
-        if (redisUtil.hasKey(username)){
+        if (RedisUtil.hasKey(username)){
             //判断refresh的时间节点和传递过来的accessToken的时间节点是否一致，不一致校验失败
-            Long tokenCurrent = (Long) redisUtil.get(username);
+            Long tokenCurrent = (Long) RedisUtil.get(PREFIX_SHIRO_TOKEN + username);
             if (Objects.requireNonNull(JWTUtil.getExpire(accessToken)).equals(tokenCurrent)){
                // 获取当前时间戳
                 Long current = System.currentTimeMillis();
@@ -160,16 +170,16 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 String password = userService.getUserByUsername(username).getPassWord();
                 // 生产刷新的token
                 String token = JWTUtil.sign(username, password, current);
-                // 刷新redis里面的refreshToken,过期时间是30min
-                redisUtil.set(username, current, 60 * 60 * 24);
+                // 刷新redis里面的refreshToken,过期时间是24小时
+                RedisUtil.set(PREFIX_SHIRO_TOKEN + username, current, SHIRO_TOKEN_EXPIRE_TIME);
                 // 再次交给shiro进行认证
                 JWTToken jwtToken = new JWTToken(token);
                 try {
                     getSubject(request, response).login(jwtToken);
                     // 最后将刷新的AccessToken存放在Response的Header中的Authorization字段返回
                     HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-                    httpServletResponse.setHeader("Authorization", token);
-                    httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+                    httpServletResponse.setHeader(LOGIN_SIGN, token);
+                    httpServletResponse.setHeader("Access-Control-Expose-Headers", LOGIN_SIGN);
                     return "success";
                 } catch (AuthenticationException e) {
                     return e.getMessage();

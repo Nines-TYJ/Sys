@@ -1,8 +1,7 @@
-package com.nines.sys.shiro.realm;
+package com.nines.sys.config.shiro.realm;
 
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
-import com.nines.sys.util.JWTUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -57,13 +56,16 @@ public class UPRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        log.info("————权限认证方法————");
-        String username = JWTUtil.getUsername(principalCollection.toString());
+        log.info("————权限认证方法(从数据库获取权限)————");
+        SysUser user = (SysUser) principalCollection.getPrimaryPrincipal();
+        String username = user.getUserName();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         // 获取用户角色
         List<String> roles = userService.getRoleByUsername(username);
+        log.info("{}拥有的角色：{}",username, roles.toString());
         // 获取用户权限
         List<String> permCodes = userService.getPermCodeByUsername(username);
+        log.info("{}拥有的权限：{}",username, permCodes.toString());
         // 设置用户拥有的角色和权限
         info.setRoles(new HashSet<>(roles));
         info.setStringPermissions(new HashSet<>(permCodes));

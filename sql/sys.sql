@@ -1,5 +1,7 @@
+-- ----------------------------
+-- 用户表
+-- ----------------------------
 DROP TABLE IF EXISTS sys_user;
-
 CREATE TABLE sys_user
 (
   id VARCHAR(32) NOT NULL COMMENT '主键ID',
@@ -16,10 +18,17 @@ CREATE TABLE sys_user
   UNIQUE KEY username(user_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT='用户';
 
-INSERT INTO sys_user(id, nick_name, user_name, pass_word, salt, create_time, update_time) VALUES('1319171516998582274', 'test', 'test', 'dd3927221f5f01f0fb338c5c714cebfc', 'pezYZ35YUyCU5OVr64YF4g==', current_timestamp(), current_timestamp());
+-- ----------------------------
+-- 用户表数据
+-- ----------------------------
+INSERT INTO `sys_user` VALUES ('1319171516998582274', 'test', 'test', 'dd3927221f5f01f0fb338c5c714cebfc', 'pezYZ35YUyCU5OVr64YF4g==', NULL, NULL, 0, '2020-10-28 10:54:12', '2020-10-28 10:54:12');
+INSERT INTO `sys_user` VALUES ('1321709113132806146', 'root', 'root', 'b9b5c1fdf9aa0648050b7a481ee53029', 'Z9/m8GmqvcmRKXkLyn+SvA==', NULL, NULL, 0, '2020-10-29 15:03:03', '2020-10-29 15:03:03');
 
+
+-- ----------------------------
+-- 角色表
+-- ----------------------------
 DROP TABLE IF EXISTS sys_role;
-
 CREATE TABLE sys_role
 (
   id VARCHAR(32) NOT NULL COMMENT '主键ID',
@@ -32,9 +41,17 @@ CREATE TABLE sys_role
   UNIQUE KEY name(name)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '角色';
 
+-- ----------------------------
+-- 角色表数据
+-- ----------------------------
+INSERT INTO `sys_role` VALUES ('1321704376954089474', 'admin', '超级权限', 0, '2020-10-29 14:45:23', '2020-10-29 14:44:14');
+INSERT INTO `sys_role` VALUES ('1321704627098185729', 'test', '测试权限', 0, '2020-10-29 14:45:30', '2020-10-29 14:45:13');
 
+
+-- ----------------------------
+-- 用户角色表
+-- ----------------------------
 DROP TABLE IF EXISTS sys_user_role;
-
 CREATE TABLE sys_user_role
 (
   id VARCHAR(32) NOT NULL COMMENT '主键ID',
@@ -46,13 +63,21 @@ CREATE TABLE sys_user_role
   PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '用户与角色关系表';
 
+-- ----------------------------
+-- 用户角色表数据
+-- ----------------------------
+INSERT INTO `sys_user_role` VALUES ('1321713032340783106', '1321709113132806146', '1321704376954089474', 0, '2020-10-29 15:18:37', '2020-10-29 15:18:37');
+INSERT INTO `sys_user_role` VALUES ('1321713293205520386', '1319171516998582274', '1321704627098185729', 0, '2020-10-29 15:19:40', '2020-10-29 15:19:40');
 
+
+-- ----------------------------
+-- 权限表
+-- ----------------------------
 DROP TABLE IF EXISTS sys_permission;
-
 CREATE TABLE sys_permission
 (
   id VARCHAR(32) NOT NULL COMMENT '主键ID',
-  menu_id VARCHAR(32) NOT NULL DEFAULT 0 COMMENT '所属菜单ID',
+  menu_id VARCHAR(32) NOT NULL COMMENT '所属菜单ID',
   name VARCHAR(50) NOT NULL COMMENT '权限名称',
   remark VARCHAR(100) DEFAULT NULL COMMENT '备注',
   sort smallint(5) DEFAULT 100 COMMENT '排序',
@@ -64,9 +89,33 @@ CREATE TABLE sys_permission
   UNIQUE KEY perm_code(perm_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '权限表';
 
+-- ----------------------------
+-- 权限表数据
+-- ----------------------------
+INSERT INTO `sys_permission` VALUES ('1321701314659184642', '1321698585010315265', '添加用户', NULL, 100, 'user:add', 0, '2020-10-29 15:56:17', '2020-10-29 15:56:15');
+INSERT INTO `sys_permission` VALUES ('1321701518804348929', '1321698585010315265', '删除用户', NULL, 101, 'user:delete', 0, '2020-10-29 15:56:20', '2020-10-29 15:56:18');
+INSERT INTO `sys_permission` VALUES ('1321701578669649921', '1321698585010315265', '修改用户', NULL, 102, 'user:update', 0, '2020-10-29 15:56:24', '2020-10-29 15:56:23');
+INSERT INTO `sys_permission` VALUES ('1321701699717263362', '1321698585010315265', '查看用户', NULL, 103, 'user:select', 0, '2020-10-29 15:56:27', '2020-10-29 15:56:26');
+INSERT INTO `sys_permission` VALUES ('1321702222080077826', '1321698585010315265', '修改用户角色', NULL, 104, 'user:distribution', 0, '2020-10-29 15:56:30', '2020-10-29 15:56:28');
+INSERT INTO `sys_permission` VALUES ('1321702437486948354', '1321698672767737858', '添加角色', NULL, 100, 'role:add', 0, '2020-10-29 15:56:33', '2020-10-29 15:56:31');
+INSERT INTO `sys_permission` VALUES ('1321702511340253185', '1321698672767737858', '删除角色', NULL, 101, 'role:delete', 0, '2020-10-29 15:56:35', '2020-10-29 15:56:34');
+INSERT INTO `sys_permission` VALUES ('1321702558584893442', '1321698672767737858', '修改角色', NULL, 102, 'role:update', 0, '2020-10-29 15:56:37', '2020-10-29 15:56:36');
+INSERT INTO `sys_permission` VALUES ('1321702602918686722', '1321698672767737858', '查看角色', NULL, 103, 'role:select', 0, '2020-10-29 15:56:41', '2020-10-29 15:56:39');
+INSERT INTO `sys_permission` VALUES ('1321702729473421314', '1321698672767737858', '修改角色权限', NULL, 104, 'role:distribution', 0, '2020-10-29 15:56:44', '2020-10-29 15:56:42');
+INSERT INTO `sys_permission` VALUES ('1321703020411318273', '1321698698013253634', '添加权限', NULL, 100, 'permission:add', 0, '2020-10-29 15:56:47', '2020-10-29 15:56:45');
+INSERT INTO `sys_permission` VALUES ('1321703092054224897', '1321698698013253634', '删除权限', NULL, 101, 'permission:delete', 0, '2020-10-29 15:56:50', '2020-10-29 15:56:48');
+INSERT INTO `sys_permission` VALUES ('1321703143656747010', '1321698698013253634', '修改权限', NULL, 102, 'permission:update', 0, '2020-10-29 15:56:52', '2020-10-29 15:56:51');
+INSERT INTO `sys_permission` VALUES ('1321703175218884609', '1321698698013253634', '查看权限', NULL, 103, 'permission:select', 0, '2020-10-29 15:56:54', '2020-10-29 15:56:53');
+INSERT INTO `sys_permission` VALUES ('1321703263521566721', '1321698720280813570', '添加菜单', NULL, 100, 'menu:add', 0, '2020-10-29 15:56:57', '2020-10-29 15:56:55');
+INSERT INTO `sys_permission` VALUES ('1321703324049567745', '1321698720280813570', '删除菜单', NULL, 101, 'menu:delete', 0, '2020-10-29 15:57:00', '2020-10-29 15:56:59');
+INSERT INTO `sys_permission` VALUES ('1321703360791670786', '1321698720280813570', '修改菜单', NULL, 102, 'menu:update', 0, '2020-10-29 15:57:03', '2020-10-29 15:57:01');
+INSERT INTO `sys_permission` VALUES ('1321703407033872385', '1321698720280813570', '查看菜单', NULL, 103, 'menu:select', 0, '2020-10-29 15:57:07', '2020-10-29 15:57:04');
 
+
+-- ----------------------------
+-- 角色权限表
+-- ----------------------------
 DROP TABLE IF EXISTS sys_role_permission;
-
 CREATE TABLE sys_role_permission
 (
   id VARCHAR(32) NOT NULL COMMENT '主键ID',
@@ -78,8 +127,33 @@ CREATE TABLE sys_role_permission
   PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '角色与权限关系表';
 
-DROP TABLE IF EXISTS sys_menu;
+-- ----------------------------
+-- 角色权限表数据
+-- ----------------------------
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366274', '1321704376954089474', '1321701314659184642', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366275', '1321704376954089474', '1321701518804348929', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366276', '1321704376954089474', '1321701578669649921', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366277', '1321704376954089474', '1321701699717263362', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366278', '1321704376954089474', '1321702222080077826', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366279', '1321704376954089474', '1321702437486948354', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366280', '1321704376954089474', '1321702511340253185', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366281', '1321704376954089474', '1321702558584893442', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366282', '1321704376954089474', '1321702602918686722', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366283', '1321704376954089474', '1321702729473421314', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366284', '1321704376954089474', '1321703020411318273', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366285', '1321704376954089474', '1321703092054224897', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366286', '1321704376954089474', '1321703143656747010', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366287', '1321704376954089474', '1321703175218884609', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366288', '1321704376954089474', '1321703263521566721', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366289', '1321704376954089474', '1321703324049567745', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366290', '1321704376954089474', '1321703360791670786', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
+INSERT INTO `sys_role_permission` VALUES ('1321721854845366291', '1321704376954089474', '1321703407033872385', 0, '2020-10-29 15:53:41', '2020-10-29 15:53:41');
 
+
+-- ----------------------------
+-- 菜单表
+-- ----------------------------
+DROP TABLE IF EXISTS sys_menu;
 CREATE TABLE sys_menu
 (
   id VARCHAR(32) NOT NULL COMMENT '主键ID',
@@ -93,3 +167,11 @@ CREATE TABLE sys_menu
   update_time TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '菜单表';
+
+-- ----------------------------
+-- 菜单表数据
+-- ----------------------------
+INSERT INTO `sys_menu` VALUES ('1321698585010315265', '0', '用户管理', NULL, '/sys/user', 100, 0, '2020-10-29 14:21:58', '2020-10-29 14:21:13');
+INSERT INTO `sys_menu` VALUES ('1321698672767737858', '0', '角色管理', NULL, '/sys/role', 101, 0, '2020-10-29 14:22:26', '2020-10-29 14:21:34');
+INSERT INTO `sys_menu` VALUES ('1321698698013253634', '0', '权限管理', NULL, '/sys/permission', 102, 0, '2020-10-29 14:22:30', '2020-10-29 14:21:40');
+INSERT INTO `sys_menu` VALUES ('1321698720280813570', '0', '菜单管理', NULL, '/sys/menu', 103, 0, '2020-10-29 14:22:35', '2020-10-29 14:21:45');

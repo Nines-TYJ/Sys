@@ -1,7 +1,9 @@
-package com.nines.sys.shiro;
+package com.nines.sys.config.shiro;
 
-import com.nines.sys.shiro.realm.JWTRealm;
-import com.nines.sys.shiro.realm.UPRealm;
+import com.nines.sys.config.shiro.cache.MyCacheManager;
+import com.nines.sys.config.shiro.jwt.JWTFilter;
+import com.nines.sys.config.shiro.realm.JWTRealm;
+import com.nines.sys.config.shiro.realm.UPRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
@@ -11,7 +13,6 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -81,20 +82,22 @@ public class ShiroConfig {
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         securityManager.setSubjectDAO(subjectDAO);
+        // 设置自定义缓存（cache）管理器
+        securityManager.setCacheManager(new MyCacheManager());
         return securityManager;
     }
 
     /**
      * 添加注解支持
      */
-    @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
-        // https://zhuanlan.zhihu.com/p/29161098
-        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-        return defaultAdvisorAutoProxyCreator;
-    }
+//    @Bean
+//    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+//        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+//        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
+//        // https://zhuanlan.zhihu.com/p/29161098
+//        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+//        return defaultAdvisorAutoProxyCreator;
+//    }
 
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {

@@ -10,6 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import javax.annotation.Resource;
  * @author Nines
  * @since 2020-10-22
  */
+@RequiresAuthentication
 @RestController
 @Api(description = "后台用户相关接口")
 @RequestMapping("/sys/user")
@@ -31,6 +34,7 @@ public class SysUserController {
     @Resource
     private ISysUserService userService;
 
+    @RequiresPermissions({"user:select"})
     @ApiOperation(value = "登录信息", notes = "获取登录者信息")
     @GetMapping("/login_info")
     public ResponseVo getUserInfo(){

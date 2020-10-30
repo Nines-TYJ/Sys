@@ -1,8 +1,8 @@
-package com.nines.sys.shiro;
+package com.nines.sys.config.shiro;
 
-import com.nines.sys.shiro.realm.JWTRealm;
-import com.nines.sys.shiro.realm.UPRealm;
-import org.apache.shiro.authc.AuthenticationException;
+import com.nines.sys.config.shiro.jwt.JWTToken;
+import com.nines.sys.config.shiro.realm.JWTRealm;
+import com.nines.sys.config.shiro.realm.UPRealm;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
