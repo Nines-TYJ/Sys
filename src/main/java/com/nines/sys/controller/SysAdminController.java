@@ -39,6 +39,12 @@ public class SysAdminController {
     @Resource
     private ISysUserService userService;
 
+
+    /**
+     * 登录标识
+     */
+    private static final String LOGIN_SIGN = Constant.LOGIN_SIGN;
+
     /**
      * shiro token缓存前缀
      */
@@ -128,7 +134,7 @@ public class SysAdminController {
     @ApiOperation(value = "登录", notes = "账号密码登录")
     @ApiImplicitParam(name = "accountPasswordVo", value = "登录验证类", dataType = "AccountPasswordVo")
     @PostMapping("/account_login")
-    public ResponseVo accountPasswordLogin(HttpServletRequest request, @RequestBody AccountPasswordVo accountPasswordVo){
+    public ResponseVo accountPasswordLogin(HttpServletRequest request, HttpServletResponse response, @RequestBody AccountPasswordVo accountPasswordVo){
         if (StrUtil.hasBlank(accountPasswordVo.getUsername()) || StrUtil.hasBlank(accountPasswordVo.getPassword())){
             return ResponseVo.fail("用户名和密码不能为空");
         }
@@ -156,10 +162,8 @@ public class SysAdminController {
         String jwtToken = JWTUtil.sign(user.getUserName(), user.getPassWord(), current);
         // refreshToken加入redis 1天内有效
         RedisUtil.set(PREFIX_SHIRO_TOKEN + user.getUserName(), current, SHIRO_TOKEN_EXPIRE_TIME);
-        return ResponseVo.ok(new HashMap<String, String>(1){
-            {
-                put("token", jwtToken);
-            }
-        });
+        response.setHeader(LOGIN_SIGN, jwtToken);
+        response.setHeader("Access-Control-Expose-Headers", LOGIN_SIGN);
+        return ResponseVo.ok("登录成功");
     }
 }
