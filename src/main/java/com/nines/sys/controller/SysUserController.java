@@ -4,6 +4,8 @@ package com.nines.sys.controller;
 import cn.hutool.core.util.StrUtil;
 import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
+import com.nines.sys.util.Constant;
+import com.nines.sys.util.RedisUtil;
 import com.nines.sys.vo.PageVo;
 import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
@@ -30,6 +32,8 @@ import javax.annotation.Resource;
 @Api(description = "后台用户相关接口")
 @RequestMapping("/sys/user")
 public class SysUserController {
+
+    private static final String PREFIX_SHIRO_TOKEN = Constant.PREFIX_SHIRO_TOKEN;
 
     @Resource
     private ISysUserService userService;
@@ -80,5 +84,22 @@ public class SysUserController {
     @PostMapping("/delete/{id}")
     public ResponseVo delete(@PathVariable String id){
         return userService.deleteUserById(id) ? ResponseVo.ok("操作成功") : ResponseVo.fail("操作失败");
+    }
+
+    @ApiOperation(value = "退出登录", notes = "退出登录")
+    @GetMapping("/logout")
+    public ResponseVo logout(){
+        Subject subject = SecurityUtils.getSubject();
+        SysUser user = (SysUser) subject.getPrincipal();
+        if (user == null){
+            return ResponseVo.fail("用户未登录");
+        }
+        if (!RedisUtil.hasKey(PREFIX_SHIRO_TOKEN + user.getUserName())){
+            return ResponseVo.fail("用户未登录");
+        }
+        // 删除缓存中的记录
+        RedisUtil.del(PREFIX_SHIRO_TOKEN + user.getUserName());
+        subject.logout();
+        return ResponseVo.ok("退出成功");
     }
 }

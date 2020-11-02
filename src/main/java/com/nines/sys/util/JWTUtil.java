@@ -84,7 +84,7 @@ public class JWTUtil {
     }
 
     /**
-     * 获取token创建时间
+     * 获取token的创建时间
      * @param token 密钥
      * @return 创建的时间戳
      */

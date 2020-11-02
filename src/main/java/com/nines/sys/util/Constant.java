@@ -15,7 +15,7 @@ public class Constant {
     /**
      * token 有效时间（分钟）
      */
-    public static final long JWT_MINUTE = 60;
+    public static final long JWT_MINUTE = 30;
 
     /**
      * 密码加密盐
