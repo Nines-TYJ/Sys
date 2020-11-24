@@ -150,5 +150,20 @@ INSERT INTO `sys_permission` VALUES ('1321703143656747010', '1321698698013253634
 INSERT INTO `sys_permission` VALUES ('1321703175218884609', '1321698698013253634', '查看权限', NULL, 'permission:select', 103, 0, '2020-10-29 15:56:54', '2020-10-29 15:56:53');
 
 
+-- ----------------------------
+-- 日志表
+-- ----------------------------
+DROP TABLE IF EXISTS sys_log;
+CREATE TABLE sys_log
+(
+  id VARCHAR(32) NOT NULL COMMENT '主键ID',
+  ip INT(10) NOT NULL DEFAULT 0 COMMENT 'ip地址',
+  operate_url VARCHAR(100) NOT NULL DEFAULT '' COMMENT '请求的访问地址',
+  operate_method VARCHAR(100) NOT NULL DEFAULT '' COMMENT '请求的方法',
+  operate_by VARCHAR(100) DEFAULT '' COMMENT '请求的浏览器',
+  operate_time TIMESTAMP COMMENT '请求的时间',
+  PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COMMENT '日志表';
+
 
 

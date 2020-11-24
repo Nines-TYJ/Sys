@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 
 /**
  * @author TYJ
@@ -33,7 +32,7 @@ import java.util.HashMap;
 @Slf4j
 @RestController
 @RequestMapping("/sys/admin")
-@Api(description = "后台登录注册接口")
+@Api(tags = "后台登录注册接口")
 public class SysAdminController {
 
     @Resource

@@ -13,7 +13,7 @@ import com.nines.sys.service.ISysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nines.sys.util.MyEnumUtil;
 import com.nines.sys.util.PasswordMd5Util;
-import com.nines.sys.vo.PageVo;
+import com.nines.sys.util.PageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,17 +123,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public Map<String, Object> findPage(PageVo pageVo) {
-        Page<SysUser> page = new Page<>(pageVo.getPage(), pageVo.getSize());
+    public PageUtil findPage(PageUtil pageUtil) {
+        Page<SysUser> page = new Page<>(pageUtil.getCurrent(), pageUtil.getSize());
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        if (!StrUtil.hasBlank(pageVo.getName())){
-            queryWrapper.like("name", pageVo.getName());
+        if (!StrUtil.hasBlank(pageUtil.getSearchText())){
+            queryWrapper.like("name", pageUtil.getSearchText());
         }
         IPage<SysUser> iPage = this.baseMapper.selectPage(page, queryWrapper);
-        Map<String, Object> dataPage = new HashMap<>();
-        dataPage.put("datas", iPage.getRecords());
-        dataPage.put("totals", iPage.getTotal());
-        return dataPage;
+        return new PageUtil(iPage);
     }
 
 }

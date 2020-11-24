@@ -20,6 +20,6 @@ public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
      * @param userRoleList 角色列表
      * @return 成功条数
      */
-    int insetBatch(List<SysUserRole> userRoleList);
+    int insertBatch(List<SysUserRole> userRoleList);
 
 }

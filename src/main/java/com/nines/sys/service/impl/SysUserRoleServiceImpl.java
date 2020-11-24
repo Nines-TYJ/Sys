@@ -44,7 +44,7 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
                 userRole.setCreateTime(LocalDateTime.now());
                 userRole.setUpdateTime(LocalDateTime.now());
             });
-            return this.baseMapper.insetBatch(userRoles) > 0;
+            return this.baseMapper.insertBatch(userRoles) > 0;
         }
         return false;
     }

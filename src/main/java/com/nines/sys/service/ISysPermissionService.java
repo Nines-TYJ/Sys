@@ -2,7 +2,7 @@ package com.nines.sys.service;
 
 import com.nines.sys.entity.SysPermission;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.nines.sys.vo.PageVo;
+import com.nines.sys.util.PageUtil;
 import com.nines.sys.vo.TreeNode;
 
 import java.util.List;
@@ -48,10 +48,10 @@ public interface ISysPermissionService extends IService<SysPermission> {
 
     /**
      * 获取权限列表
-     * @param pageVo 分页参数
+     * @param pageUtil 分页参数
      * @return map
      */
-    Map<String, Object> findPage(PageVo pageVo);
+    PageUtil findPage(PageUtil pageUtil);
 
     /**
      * 生产菜单权限树

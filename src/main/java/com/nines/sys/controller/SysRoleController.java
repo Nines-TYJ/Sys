@@ -4,7 +4,7 @@ package com.nines.sys.controller;
 import cn.hutool.core.util.StrUtil;
 import com.nines.sys.entity.SysRole;
 import com.nines.sys.service.ISysRoleService;
-import com.nines.sys.vo.PageVo;
+import com.nines.sys.util.PageUtil;
 import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 @RequiresAuthentication
 @RestController
 @RequestMapping("/sys/role")
-@Api(description = "后台角色相关接口")
+@Api(tags = "后台角色相关接口")
 public class SysRoleController {
 
     @Resource
@@ -45,8 +45,8 @@ public class SysRoleController {
     @ApiOperation(value = "角色分页", notes = "角色列表分页")
     @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
-    public ResponseVo getDataPage(@RequestBody PageVo pageVo){
-        return ResponseVo.ok(roleService.findPage(pageVo));
+    public ResponseVo getDataPage(@RequestBody PageUtil pageUtil){
+        return ResponseVo.ok(roleService.findPage(pageUtil));
     }
 
     @RequiresPermissions({"role:inset", "role:update"})

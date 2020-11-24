@@ -4,7 +4,7 @@ package com.nines.sys.controller;
 import cn.hutool.core.util.StrUtil;
 import com.nines.sys.entity.SysPermission;
 import com.nines.sys.service.ISysPermissionService;
-import com.nines.sys.vo.PageVo;
+import com.nines.sys.util.PageUtil;
 import com.nines.sys.vo.ResponseVo;
 import com.nines.sys.vo.TreeNode;
 import io.swagger.annotations.Api;
@@ -28,7 +28,7 @@ import java.util.List;
 @RequiresAuthentication
 @RestController
 @RequestMapping("/sys/permission")
-@Api(description = "后台权限相关接口")
+@Api(tags = "后台权限相关接口")
 public class SysPermissionController {
 
     @Resource
@@ -47,8 +47,8 @@ public class SysPermissionController {
     @ApiOperation(value = "权限分页", notes = "权限列表分页")
     @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
-    public ResponseVo getDataPage(@RequestBody PageVo pageVo){
-        return ResponseVo.ok(permissionService.findPage(pageVo));
+    public ResponseVo getDataPage(@RequestBody PageUtil pageUtil){
+        return ResponseVo.ok(permissionService.findPage(pageUtil));
     }
 
     @RequiresPermissions({"permission:insert", "permission:update"})

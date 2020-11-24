@@ -17,7 +17,7 @@
         <lombok.version>1.18.12</lombok.version>
         <fastjson.version>1.2.54</fastjson.version>
         <commons.version>3.9</commons.version>
-        <hutool.version>4.5.17</hutool.version>
+        <hutool.version>5.4.2</hutool.version>
         <shiro.version>1.4.0</shiro.version>
         <jwt.version>3.10.3</jwt.version>
     </properties>
@@ -146,7 +146,7 @@
     </dependencies>
 
     <build>
-        <finalName>starter</finalName>
+        <finalName>sys</finalName>
 
         <plugins>
             <plugin>

@@ -1,6 +1,5 @@
 package com.nines.sys.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -11,7 +10,7 @@ import com.nines.sys.mapper.SysPermissionMapper;
 import com.nines.sys.service.ISysPermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nines.sys.util.MyEnumUtil;
-import com.nines.sys.vo.PageVo;
+import com.nines.sys.util.PageUtil;
 import com.nines.sys.vo.TreeNode;
 import org.springframework.stereotype.Service;
 
@@ -79,17 +78,14 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     }
 
     @Override
-    public Map<String, Object> findPage(PageVo pageVo) {
-        Page<SysPermission> page = new Page<>(pageVo.getPage(), pageVo.getSize());
+    public PageUtil findPage(PageUtil pageUtil) {
+        Page<SysPermission> page = new Page<>(pageUtil.getCurrent(), pageUtil.getSize());
         QueryWrapper<SysPermission> queryWrapper = new QueryWrapper<>();
-        if (!StrUtil.hasBlank(pageVo.getName())){
-            queryWrapper.like("name", pageVo.getName());
+        if (!StrUtil.hasBlank(pageUtil.getSearchText())){
+            queryWrapper.like("name", pageUtil.getSearchText());
         }
         IPage<SysPermission> iPage = this.baseMapper.selectPage(page, queryWrapper);
-        Map<String, Object> dataPage = new HashMap<>();
-        dataPage.put("datas", iPage.getRecords());
-        dataPage.put("totals", iPage.getTotal());
-        return dataPage;
+        return new PageUtil(iPage);
     }
 
     @Override

@@ -26,7 +26,7 @@ import java.util.List;
 @RequiresAuthentication
 @RestController
 @RequestMapping("/sys/user_role")
-@Api(description = "后台用户角色相关接口")
+@Api(tags = "后台用户角色相关接口")
 public class SysUserRoleController {
 
     @Resource

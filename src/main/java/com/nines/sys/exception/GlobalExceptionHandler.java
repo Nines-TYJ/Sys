@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseVo handle(RuntimeException e){
-        log.error("发生运行时异常！原因是:",e.getMessage());
+        log.error("发生运行时异常！原因是: {}",e.getMessage());
         return ResponseVo.error("服务器错误");
     }
 

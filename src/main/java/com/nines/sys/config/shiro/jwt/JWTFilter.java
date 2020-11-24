@@ -142,7 +142,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             out.flush();
             out.close();
         }catch (Exception ex){
-            log.error("回写数据发生错误: {}", ex);
+            log.error("回写数据发生错误: {}", ex.getMessage());
         }
     }
 

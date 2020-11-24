@@ -6,7 +6,7 @@ import com.nines.sys.entity.SysUser;
 import com.nines.sys.service.ISysUserService;
 import com.nines.sys.util.Constant;
 import com.nines.sys.util.RedisUtil;
-import com.nines.sys.vo.PageVo;
+import com.nines.sys.util.PageUtil;
 import com.nines.sys.vo.ResponseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,7 +29,7 @@ import javax.annotation.Resource;
  */
 @RequiresAuthentication
 @RestController
-@Api(description = "后台用户相关接口")
+@Api("后台用户相关接口")
 @RequestMapping("/sys/user")
 public class SysUserController {
 
@@ -61,8 +61,8 @@ public class SysUserController {
     @ApiOperation(value = "用户分页", notes = "用户列表分页")
     @ApiImplicitParam(name = "pageVo", value = "分页参数实体", dataType = "PageVo")
     @PostMapping("/data_page")
-    public ResponseVo getDataPage(@RequestBody PageVo pageVo){
-        return ResponseVo.ok(userService.findPage(pageVo));
+    public ResponseVo getDataPage(@RequestBody PageUtil pageUtil){
+        return ResponseVo.ok(userService.findPage(pageUtil));
     }
 
     @RequiresPermissions({"user:insert", "user:update"})
